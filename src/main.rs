@@ -13,17 +13,20 @@ fn main() -> Result<()> {
         .context("failed to parse file")?;
 
     let mut count: u32 = 0;
+    let mut correct: u32 = 0;
     let mut loss: f64 = 0.;
     for round in parsed.rounds {
         for turn in round.turns {
             count += 1;
+            correct += (turn.player == turn.mortal) as u32;
             let player = &turn.actions[turn.player];
             let mortal = &turn.actions[turn.mortal];
             loss += (mortal.q - player.q).abs() as f64;
         }
     }
     let average_loss = loss / count as f64;
-    println!("{average_loss}");
+    let correct_ratio = correct as f32 / count as f32;
+    println!("average loss:  {average_loss:.3}\ncorrect ratio: {correct_ratio:.3}");
 
     Ok(())
 }
